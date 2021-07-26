@@ -13,6 +13,53 @@ export default class Discover extends Component {
     };
   }
 
+  componentDidMount() {
+    let params = new URLSearchParams(window.location.hash.substring(1));
+    let token = params.get('access_token');
+
+    fetch("https://api.spotify.com/v1/browse/categories", {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(res => res.json()).then(
+      (result) => {
+        if (!("error" in result)){
+          this.setState({
+            categories: result.categories.items
+          });
+        }
+      }
+    )
+
+    fetch("https://api.spotify.com/v1/browse/new-releases", {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(res => res.json()).then(
+      (result) => {
+        if (!("error" in result)){
+          this.setState({
+            newReleases: result.albums.items
+          });
+        }
+      }
+    )
+
+    fetch("https://api.spotify.com/v1/browse/featured-playlists", {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(res => res.json()).then(
+      (result) => {
+        if (!("error" in result)){
+          this.setState({
+            playlists: result.playlists.items
+          });
+        }
+      }
+    )
+  }
+
   render() {
     const { newReleases, playlists, categories } = this.state;
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import cx from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -21,12 +21,49 @@ function renderSideBarOption(link, icon, text, { selected } = {}) {
   )
 }
 
+let params = new URLSearchParams(window.location.hash.substring(1));
+let token = params.get('access_token');
+
 export default function SideBar() {
+  
+  const [me, setMe] = useState([]);
+  const [avatar, setAvatar] = useState([]);
+
+  useEffect(() => {
+    fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(res => res.json()).then(
+      (result) => {
+        if (!("error" in result)){
+          setMe(result.display_name);
+        }
+      }
+    )
+    
+    fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    }).then(res => res.json()).then(
+      (result) => {
+        if (!("error" in result)){
+          setAvatar(result.images);
+        }
+      }
+    )
+  }, []);
+
   return (
     <div className="sidebar">
       <div className="sidebar__profile">
-        <Avatar />
-        <p>Bob Smith</p>
+        {
+          (avatar.length===0)? 
+          (<Avatar />):
+          (<div className="sidebar__profile__avatar" style={{ backgroundImage: `url(${avatar[0].url})`, backgroundPosition: `center`, backgroundSize: `80% auto`}}/>)
+        }
+        <p>{me}</p>
       </div>
       <div className="sidebar__options">
         {renderSideBarOption('/', faHeadphonesAlt, 'Discover', { selected: true })}

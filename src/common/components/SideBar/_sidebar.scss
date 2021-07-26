@@ -94,5 +94,11 @@
       box-shadow: $mid-box-shadow;
       border-radius: 50%;
     }
+
+    &__avatar{
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+    }
   }
 }
